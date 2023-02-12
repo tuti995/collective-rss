@@ -1,18 +1,10 @@
-export type Member = {
-  id: string;
+export type GetList = {
   name: string;
-  role?: string;
-  bio?: string;
   sources?: string[];
-  includeUrlRegex?: string;
-  excludeUrlRegex?: string;
-  githubUsername?: string;
-  twitterUsername?: string;
-  websiteUrl?: string;
 };
 
 export type PostItem = {
-  authorId: string;
+  // authorId: string;
   authorName: string;
   title: string;
   link: string;

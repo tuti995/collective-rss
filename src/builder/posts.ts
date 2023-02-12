@@ -1,6 +1,7 @@
 import fs from "fs-extra";
 import Parser from "rss-parser";
-import { PostItem, Member } from "../types";
+import { getLists } from "../../getLists";
+import { PostItem, GetList } from "../types";
 
 type FeedItem = {
   title: string;
@@ -52,8 +53,8 @@ async function getFeedItemsFromSources(sources: undefined | string[]) {
   return feedItems;
 }
 
-async function getMemberFeedItems(member: Member): Promise<PostItem[]> {
-  const { id, sources, name, includeUrlRegex, excludeUrlRegex } = member;
+async function getMemberFeedItems(member: GetList): Promise<PostItem[]> {
+  const { sources, name } = member;
   const feedItems = await getFeedItemsFromSources(sources);
   if (!feedItems) return [];
 
@@ -61,21 +62,31 @@ async function getMemberFeedItems(member: Member): Promise<PostItem[]> {
     return {
       ...item,
       authorName: name,
-      authorId: id,
+      // authorId: id,
     };
   });
   // remove items which not matches includeUrlRegex
-  if (includeUrlRegex) {
-    postItems = postItems.filter((item) => {
-      return item.link.match(new RegExp(includeUrlRegex));
-    });
-  }
+  // if (includeUrlRegex) {
+  //   postItems = postItems.filter((item) => {
+  //     return item.link.match(new RegExp(includeUrlRegex));
+  //   });
+  // }
   // remove items which matches excludeUrlRegex
-  if (excludeUrlRegex) {
-    postItems = postItems.filter((item) => {
-      return !item.link.match(new RegExp(excludeUrlRegex));
-    });
-  }
+  // if (excludeUrlRegex) {
+  //   postItems = postItems.filter((item) => {
+  //     return !item.link.match(new RegExp(excludeUrlRegex));
+  //   });
+  // }
 
   return postItems;
 }
+
+(async function () {
+  for (const getList of getLists) {
+    const items = await getMemberFeedItems(getList);
+    if (items) allPostItems = [...allPostItems, ...items];
+  }
+  allPostItems.sort((a, b) => b.dateMiliSeconds - a.dateMiliSeconds);
+  fs.ensureDirSync(".contents");
+  fs.writeJsonSync(".contents/posts.json", allPostItems);
+})();
