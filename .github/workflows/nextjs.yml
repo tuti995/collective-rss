@@ -7,7 +7,7 @@ name: Deploy Next.js site to Pages
 on:
   schedule:
     # 定期実行する時間・・・①
-    - cron: '1 * * * *'
+    - cron: '0 0,12 * * *'
     
   # Runs on pushes targeting the default branch
   push:
